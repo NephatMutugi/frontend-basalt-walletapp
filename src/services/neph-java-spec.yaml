@@ -1,0 +1,255 @@
+openapi: 3.0.0
+info:
+  title: Java Full Stack Dev Assessment API
+  version: 1.0.0
+paths:
+  /login:
+    post:
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /register:
+    post:
+      summary: Register User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterUserResponse'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /activate:
+    post:
+      summary: Activate User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivateUserRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivateUserResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /request-activation-code:
+    get:
+      summary: Request Activation Code
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: User ID
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestActivationCodeResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /transaction-history:
+    get:
+      summary: Get Transaction History
+      parameters:
+        - name: accountId
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Account ID
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionHistoryResponse'
+components:
+  schemas:
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    LoginResponse:
+      type: object
+      properties:
+        header:
+          $ref: '#/components/schemas/Header'
+        data:
+          type: object
+          properties:
+            token:
+              type: string
+            username:
+              type: string
+            role:
+              type: string
+    RegisterUserRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        passwordHash:
+          type: string
+        email:
+          type: string
+        fullName:
+          type: string
+        phoneNumber:
+          type: string
+        dateOfBirth:
+          type: string
+        street:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        postalCode:
+          type: string
+        country:
+          type: string
+    RegisterUserResponse:
+      type: object
+      properties:
+        header:
+          $ref: '#/components/schemas/Header'
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+            username:
+              type: string
+            email:
+              type: string
+            fullName:
+              type: string
+            phoneNumber:
+              type: string
+            dateOfBirth:
+              type: string
+            street:
+              type: string
+            city:
+              type: string
+            state:
+              type: string
+            postalCode:
+              type: string
+            country:
+              type: string
+            activationCode:
+              type: string
+            isActive:
+              type: boolean
+            isDeactivated:
+              type: boolean
+            role:
+              type: string
+    ActivateUserRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+        activationCode:
+          type: string
+        transactionType:
+          type: string
+    ActivateUserResponse:
+      type: object
+      properties:
+        header:
+          $ref: '#/components/schemas/Header'
+        data:
+          $ref: '#/components/schemas/RegisterUserResponse'
+    RequestActivationCodeResponse:
+      type: object
+      properties:
+        header:
+          $ref: '#/components/schemas/Header'
+        data:
+          $ref: '#/components/schemas/RegisterUserResponse'
+    TransactionHistoryResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+          account:
+            type: string
+          type:
+            type: string
+          amount:
+            type: number
+          currencyCode:
+            type: string
+    ErrorResponse:
+      type: object
+      properties:
+        header:
+          $ref: '#/components/schemas/Header'
+        data:
+          type: null
+    Header:
+      type: object
+      properties:
+        requestRefId:
+          type: string
+        responseCode:
+          type: string
+        responseMessage:
+          type: string
+        customerMessage:
+          type: string
+        timestamp:
+          type: string
